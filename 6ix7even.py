@@ -24,6 +24,7 @@ class SimpleMotionDetector:
         # Check for vine boom sound
         self.sound_file = "vine_boom.mp3"
         self.get_out_file = "get_out.mp3"
+        self.yamete_Kudasai_file = "yameteKudasai.mp3"
 
         if os.path.exists(self.sound_file):
             print("✅ Vine boom sound loaded!")
@@ -34,6 +35,11 @@ class SimpleMotionDetector:
              print("✅ Get out sound loaded!")
         else:
             print("⚠️  Warning: get_out.mp3 not found.")
+        
+        if os.path.exists(self.yamete_Kudasai_file):
+            print("✅ Yamete Kudasai sound loaded!")
+        else:
+            print("⚠️  Warning: yameteKudasai.mp3 not found.")
 
         
     def detect_motion(self, frame):
@@ -114,13 +120,25 @@ class SimpleMotionDetector:
             print("\n🚪 GET OUT! 🚪\n")
         else:
             print("\n⚠️ Get out not found!\n")
-    
-    def play_random_sound(self):
-        """Randomly play either vine boom or get out"""
-        if random.choice([True, False]):
-            self.play_vine_boom()
+
+    def play_yamete_Kudasai(self):
+        """Play the yamete Kudasai sound effect using MacOS"""
+        if os.path.exists(self.yamete_Kudasai_file):
+            subprocess.Popen(['afplay', self.yamete_Kudasai_file])
+            print("\n YAMETE KUDASAI")
         else:
+            print("yamete kudasai not found")
+
+    def play_random_sound(self):
+        """Randomly play vine boom, get out, or yamete kudasai"""
+        choice = random.randint(0, 2)  # Random number 0, 1, or 2
+        if choice == 0:
+            self.play_vine_boom()
+        elif choice == 1:
             self.play_get_out()
+        else:
+            self.play_yamete_Kudasai()
+
 
     def run(self):
         """Main loop to run the detector"""
@@ -229,7 +247,6 @@ class SimpleMotionDetector:
         print("\n👋 Shutting down...\n")
         cap.release()
         cv2.destroyAllWindows()
-
 
 if __name__ == "__main__":
     detector = SimpleMotionDetector()
