@@ -4,6 +4,7 @@ from collections import deque
 import time
 import os
 import subprocess
+import random
 
 class SimpleMotionDetector:
     def __init__(self):
@@ -22,10 +23,18 @@ class SimpleMotionDetector:
         
         # Check for vine boom sound
         self.sound_file = "vine_boom.mp3"
+        self.get_out_file = "get_out.mp3"
+
         if os.path.exists(self.sound_file):
             print("✅ Vine boom sound loaded!")
         else:
             print("⚠️  Warning: vine_boom.mp3 not found. Please add it to the directory.")
+
+        if os.path.exists(self.get_out_file):
+             print("✅ Get out sound loaded!")
+        else:
+            print("⚠️  Warning: get_out.mp3 not found.")
+
         
     def detect_motion(self, frame):
         """Detect motion in the frame"""
@@ -83,7 +92,7 @@ class SimpleMotionDetector:
         avg_motion = np.mean(motion_list[-15:])
         
         # Detect gesture: multiple peaks + sustained motion
-        if peaks >= 2 and avg_motion > self.motion_threshold * 0.9:
+        if peaks >= 2 and avg_motion > self.motion_threshold * 0.7:
             self.last_detection_time = current_time
             return True
         
@@ -98,6 +107,21 @@ class SimpleMotionDetector:
         else:
             print("\n⚠️  Vine boom sound not found!\n")
     
+    def play_get_out(self):
+        """Play the Get out sound effect using macOS"""
+        if os.path.exists(self.get_out_file):  # CHANGE THIS from self.sound_file
+            subprocess.Popen(['afplay', self.get_out_file])  # CHANGE THIS too
+            print("\n🚪 GET OUT! 🚪\n")
+        else:
+            print("\n⚠️ Get out not found!\n")
+    
+    def play_random_sound(self):
+        """Randomly play either vine boom or get out"""
+        if random.choice([True, False]):
+            self.play_vine_boom()
+        else:
+            self.play_get_out()
+
     def run(self):
         """Main loop to run the detector"""
         print("\n🔍 Attempting to open camera...")
@@ -184,20 +208,20 @@ class SimpleMotionDetector:
                 cv2.imshow('67 Motion Detector', display)
                 cv2.waitKey(200)  # Brief pause to show detection
                 
-                self.play_vine_boom()
+                self.play_random_sound()  # TO THIS
             
             cv2.imshow('67 Motion Detector', display)
             
-            key = cv2.waitKey(2) & 0xFF
+            key = cv2.waitKey(5) & 0xFF
             if key == ord('q'):
                 break
             elif key == ord('s'):
                 # Cycle sensitivity
                 sensitivity_mode = (sensitivity_mode + 1) % 3
                 if sensitivity_mode == 0:
-                    self.motion_threshold = 3000
+                    self.motion_threshold = 1500
                 elif sensitivity_mode == 1:
-                    self.motion_threshold = 2000
+                    self.motion_threshold = 1000
                 else:
                     self.motion_threshold = 2000
                 print(f"Sensitivity changed to: {['Normal', 'High', 'Low'][sensitivity_mode]}")
@@ -210,3 +234,7 @@ class SimpleMotionDetector:
 if __name__ == "__main__":
     detector = SimpleMotionDetector()
     detector.run()
+
+    # add a stop function
+
+    
