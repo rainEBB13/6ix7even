@@ -251,6 +251,5 @@ class SimpleMotionDetector:
 if __name__ == "__main__":
     detector = SimpleMotionDetector()
     detector.run()
-
+    
     # add a stop function
-
