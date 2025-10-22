@@ -45,7 +45,7 @@ class SimpleMotionDetector:
     def detect_motion(self, frame):
         """Detect motion in the frame"""
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        gray = cv2.GaussianBlur(gray, (21, 21), 0)
+        gray = cv2.GaussianBlur(gray, (20, 20), 0)
         
         if self.prev_frame is None:
             self.prev_frame = gray
